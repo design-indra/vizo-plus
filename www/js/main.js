@@ -35,3 +35,18 @@ function showPage(page) {
 }
 
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+
+// Pintu darurat: Paksa tutup splash jika macet lebih dari 5 detik
+setTimeout(() => {
+    const splash = document.getElementById('splash-screen');
+    if (splash && splash.style.display !== 'none') {
+        console.warn("Firebase lambat merespon, memaksa splash tertutup.");
+        splash.style.display = 'none';
+        
+        // Cek apakah user sudah terdefinisi, jika tidak tampilkan login
+        if (!auth.currentUser) {
+            document.getElementById('loginOverlay').style.display = 'flex';
+            renderLogin(); // Pastikan fungsi ini ada di auth.js
+        }
+    }
+}, 5000);
