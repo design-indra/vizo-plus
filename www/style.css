@@ -48,3 +48,47 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: whit
 
 @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
 @keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* Shorts TikTok Style */
+.shorts-container {
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+}
+
+.short-video-post {
+    height: 100vh;
+    scroll-snap-align: start;
+    position: relative;
+    background: #000;
+}
+
+.shorts-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.8));
+    z-index: 5;
+}
+
+.shorts-info {
+    position: absolute;
+    bottom: 90px;
+    left: 20px;
+    z-index: 10;
+}
+
+.music-tag { font-size: 12px; color: #aaa; margin-top: 5px; display: block; }
+
+.shorts-actions {
+    position: absolute;
+    bottom: 100px;
+    right: 15px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+}
+
+.action-item { font-size: 24px; }
+.action-item span { font-size: 10px; display: block; }
