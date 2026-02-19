@@ -31,9 +31,7 @@ function showPage(page) {
 }
 
 async function renderPopular(container) {
-    container.innerHTML = `
-        <div style="padding:15px;"><h3 style="margin-bottom:15px;">Paling Populer</h3>
-        <div id="movie-grid" class="movie-grid"></div></div>`;
+    container.innerHTML = `<div style="padding:15px;"><h3>Paling Populer</h3><div id="movie-grid" class="movie-grid"></div></div>`;
     const grid = document.getElementById('movie-grid');
     try {
         const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}`);
@@ -50,10 +48,13 @@ async function searchMovies(query) {
     const grid = document.getElementById('movie-grid');
     const hero = document.getElementById('hero-section');
     if (!grid) return;
+
     if (!query || query.trim().length < 2) {
         if (hero) hero.style.display = 'block';
-        fetchLatest(); return;
+        fetchLatest(); 
+        return;
     }
+
     if (hero) hero.style.display = 'none';
     try {
         const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`);
@@ -73,7 +74,9 @@ function renderBottomNav() {
         <div class="nav-item" onclick="showPage('popular')"><span>🔥</span><p>Populer</p></div>
         <div class="nav-item" onclick="showPage('profile')"><span>👤</span><p>Profil</p></div>`;
 }
+
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+
 function updateActiveNav(page) {
     const items = document.querySelectorAll('.nav-item');
     const pages = ['home', 'shorts', 'popular', 'profile'];
