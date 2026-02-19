@@ -172,3 +172,45 @@ function clearCache() {
         location.reload();
     }
 }
+
+// File: www/js/main.js
+
+async function searchMovies(query) {
+    const grid = document.getElementById('movie-grid') || document.getElementById('pop-grid');
+    if (!grid) return;
+
+    // Jika input kosong, kembalikan ke tampilan awal (Home)
+    if (!query || query.length < 2) {
+        if (typeof renderHome === "function" && document.getElementById('movie-grid')) {
+            fetchLatest(); 
+        }
+        return;
+    }
+
+    grid.innerHTML = '<p style="text-align:center; grid-column:1/-1; padding:20px;">Mencari "' + query + '"...</p>';
+
+    try {
+        const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`);
+        const data = await res.json();
+
+        if (data.results.length === 0) {
+            grid.innerHTML = '<p style="text-align:center; grid-column:1/-1; padding:20px;">Film tidak ditemukan.</p>';
+            return;
+        }
+
+        grid.innerHTML = data.results.map(m => {
+            if (!m.poster_path) return ''; // Lewati jika tidak ada poster
+            return `
+                <div class="card" onclick="openPlayer('${m.title.replace(/'/g, "\\'")}', '${m.id}')">
+                    <div class="card-img-wrapper">
+                        <img src="${IMG_URL + m.poster_path}" alt="${m.title}">
+                    </div>
+                    <div class="card-title">${m.title}</div>
+                </div>
+            `;
+        }).join('');
+
+    } catch (e) {
+        grid.innerHTML = '<p style="text-align:center; grid-column:1/-1;">Terjadi kesalahan saat mencari.</p>';
+    }
+}
