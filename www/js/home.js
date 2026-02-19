@@ -5,31 +5,18 @@
  * @param {HTMLElement} container - Kontainer utama dari index.html
  */
 async function renderHome(container) {
-    // 1. Atur Header agar muncul di halaman Home
+    // 1. Atur Header (Logo & Tombol Menu)
     const header = document.getElementById('app-header');
     if (header) {
         header.style.display = 'flex';
         header.innerHTML = `
-            <div class="header-top">
-                <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" alt="Vizo Logo" class="vizo-logo-small">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <div class="user-avatar" onclick="showPage('profile')">
-                        ${auth.currentUser ? auth.currentUser.email[0].toUpperCase() : 'U'}
-                    </div>
-                    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-                </div>
-            </div>
-            <nav class="categories">
-                <button class="cat-btn active" onclick="fetchLatest()">Terbaru</button>
-                <button class="cat-btn" onclick="fetchTrending()">Populer</button>
-                <div class="separator"></div>
-                <button class="cat-btn" onclick="fetchDrama('ko')">K-Drama</button>
-                <button class="cat-btn" onclick="fetchDrama('zh')">C-Drama</button>
-            </nav>
+            <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" alt="Vizo Logo" class="vizo-logo-small">
+            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
         `;
     }
 
-    // 2. Isi Kontainer dengan Hero Section dan Grid Film
+    // 2. Isi Kontainer dengan Hero Section (Banner) dan Grid Film
+    // ID 76600 adalah Avatar: The Way of Water untuk tombol Putar di Banner
     container.innerHTML = `
         <section class="hero" id="hero-section" style="
             height: 60vh; 
@@ -38,58 +25,87 @@ async function renderHome(container) {
             background-position: center; 
             display: flex; 
             align-items: flex-end; 
-            padding: 20px;">
+            padding: 20px;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 20px;">
             <div class="hero-info">
                 <h1 style="font-size: 28px; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">Avatar: The Way of Water</h1>
                 <p style="font-size: 13px; color: #ccc; margin-bottom: 15px; max-width: 80%;">Jelajahi keindahan Pandora yang luar biasa dalam petualangan epik terbaru.</p>
-                <button class="play-main-btn" onclick="alert('Fitur putar akan segera hadir!')">▶ Putar Sekarang</button>
+                <button class="play-main-btn" onclick="openPlayer('Avatar: The Way of Water', '76600')">▶ Putar Sekarang</button>
             </div>
         </section>
 
-        <div style="padding: 15px 15px 5px 15px;">
-            <h3 style="font-size: 16px; font-weight: 600;">Trending Sekarang</h3>
+        <div style="padding: 0 15px 10px 15px; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="font-size: 18px; font-weight: 700; color: #fff;">Sedang Tren</h3>
+            <span style="font-size: 12px; color: #e50914;">Lihat Semua</span>
         </div>
 
         <div id="movie-grid" class="movie-grid">
-            <p style="text-align:center; grid-column: 1/-1; padding: 20px;">Memuat film...</p>
+            <p style="text-align:center; grid-column: 1/-1; padding: 50px; color: #888;">Mencari film terbaik untukmu...</p>
         </div>
     `;
 
-    // 3. Panggil data dari TMDB
+    // 3. Panggil data film dari API TMDB
     fetchLatest();
 }
 
 /**
- * Fungsi untuk mengambil data film terbaru dari API
+ * Fungsi untuk mengambil data film tren dan mengatur fitur klik putar
  */
 async function fetchLatest() {
     const grid = document.getElementById('movie-grid');
     if (!grid) return;
 
     try {
+        // Ambil data trending hari ini
         const response = await fetch(`${BASE_URL}/trending/all/day?api_key=${API_KEY}`);
         const data = await response.json();
         
-        grid.innerHTML = ''; // Bersihkan loading
+        grid.innerHTML = ''; // Hapus pesan loading
         
         data.results.forEach(movie => {
             if (!movie.poster_path) return;
 
+            const title = movie.title || movie.name;
+            const movieLink = IMG_URL + movie.poster_path;
+
+            // Membuat elemen Card Film
             const card = document.createElement('div');
             card.className = 'card';
-            card.onclick = () => alert(`Menampilkan detail: ${movie.title || movie.name}`);
+            
+            // FITUR KLIK: Memanggil fungsi openPlayer dari player.js
+            card.onclick = () => {
+                if (typeof openPlayer === "function") {
+                    openPlayer(title, movie.id);
+                } else {
+                    console.error("Fungsi openPlayer tidak ditemukan! Pastikan player.js sudah dimuat.");
+                }
+            };
+
             card.innerHTML = `
-                <img src="${IMG_URL + movie.poster_path}" alt="${movie.title || movie.name}">
-                <div class="card-title">${movie.title || movie.name}</div>
+                <div class="card-img-wrapper" style="position: relative;">
+                    <img src="${movieLink}" alt="${title}" style="width: 100%; border-radius: 12px; display: block;">
+                    <div class="play-overlay" style="position: absolute; inset: 0; background: rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; border-radius: 12px;">
+                        <span style="font-size: 40px; color: white;">▶</span>
+                    </div>
+                </div>
+                <div class="card-title" style="margin-top: 8px; font-size: 12px; font-weight: 500; color: #eee; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    ${title}
+                </div>
             `;
+            
+            // Efek Hover sederhana untuk Mobile
+            card.addEventListener('touchstart', () => {
+                card.querySelector('.play-overlay').style.opacity = '1';
+            });
+            card.addEventListener('touchend', () => {
+                card.querySelector('.play-overlay').style.opacity = '0';
+            });
+
             grid.appendChild(card);
         });
     } catch (error) {
-        console.error("Gagal mengambil data:", error);
-        grid.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">Gagal memuat data. Periksa koneksi internet.</p>';
+        console.error("Gagal mengambil data TMDB:", error);
+        grid.innerHTML = '<p style="text-align:center; grid-column: 1/-1; color: #888;">Gagal memuat film. Periksa koneksi internet.</p>';
     }
 }
-
-// Fungsi tambahan untuk navigasi kategori (bisa dikembangkan lebih lanjut)
-function fetchTrending() { fetchLatest(); }
-function fetchDrama(lang) { alert('Kategori drama ' + lang + ' segera hadir!'); }
