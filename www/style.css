@@ -329,3 +329,38 @@ header {
     color: var(--text-dim);
     margin-bottom: 5px;
 }
+
+/* Header agar logo di kiri dan garis tiga di kanan */
+#app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    position: sticky;
+    top: 0;
+    background: var(--bg-dark);
+    z-index: 1000;
+}
+
+.menu-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Sidebar Styling */
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #222;
+}
+
+.logout-item {
+    color: var(--primary) !important;
+    font-weight: bold;
+    margin-top: 30px;
+}
