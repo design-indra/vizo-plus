@@ -46,32 +46,54 @@ window.addEventListener('load', () => {
  * Merender navigasi bawah (Bottom Navigation) secara dinamis.
  */
 function renderBottomNav() {
-    const navContainer = document.getElementById('bottom-nav');
-    if (navContainer) {
-        navContainer.innerHTML = `
-            <div class="nav-item active" onclick="showPage('home')">
-                <span>🏠</span>
-                <p>Home</p>
-            </div>
-            <div class="nav-item" onclick="showPage('shorts')">
-                <span>📱</span>
-                <p>Shorts</p>
-            </div>
-            <div class="nav-item" onclick="showPage('profile')">
-                <span>👤</span>
-                <p>Profil</p>
-            </div>
-        `;
-    }
+    const nav = document.getElementById('bottom-nav');
+    nav.innerHTML = `
+        <div class="nav-item" onclick="showPage('home')"><span>🏠</span><p>Home</p></div>
+        <div class="nav-item" onclick="showPage('shorts')"><span>📱</span><p>Short</p></div>
+        <div class="nav-item" onclick="showPage('popular')"><span>🔥</span><p>Populer</p></div>
+        <div class="nav-item" onclick="showPage('profile')"><span>👤</span><p>Profil</p></div>
+    `;
 }
 
-/**
- * Fungsi utama untuk berpindah antar halaman (Single Page Application logic).
- * @param {string} page - Nama halaman yang ingin dituju ('home', 'shorts', 'profile').
- */
 function showPage(page) {
     const container = document.getElementById('content-container');
-    const navItems = document.querySelectorAll('.nav-item');
+    const header = document.getElementById('app-header');
+    
+    // Update Header (Tetap ada tombol Garis Tiga di pojok kanan atas)
+    header.innerHTML = `
+        <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" class="vizo-logo-small">
+        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+    `;
+
+    // Logika Ganti Halaman
+    if (page === 'home') renderHome(container);
+    else if (page === 'shorts') renderShorts(container);
+    else if (page === 'popular') {
+        container.innerHTML = '<div class="movie-grid" id="pop-grid"></div>';
+        fetchMoviesByPath('/movie/popular', 'pop-grid');
+    }
+    else if (page === 'profile') renderProfile(container);
+
+    // Update warna ikon navigasi aktif
+    updateNavUI(page);
+    toggleSidebar(false); // Tutup sidebar otomatis saat pindah
+}
+
+function updateNavUI(page) {
+    const items = document.querySelectorAll('.nav-item');
+    items.forEach(item => item.classList.remove('active'));
+    const idx = {home:0, shorts:1, popular:2, profile:3}[page];
+    if(items[idx]) items[idx].classList.add('active');
+}
+
+async function fetchMoviesByPath(path, targetId) {
+    const res = await fetch(`${BASE_URL}${path}?api_key=${API_KEY}`);
+    const data = await res.json();
+    document.getElementById(targetId).innerHTML = data.results.map(m => `
+        <div class="card"><img src="${IMG_URL + m.poster_path}"></div>
+    `).join('');
+}
+
     
     // 1. Reset status aktif pada tombol navigasi bawah
     navItems.forEach(item => item.classList.remove('active'));
