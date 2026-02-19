@@ -31,15 +31,15 @@ function showPage(page) {
 }
 
 async function renderPopular(container) {
-    container.innerHTML = `<div style="padding:15px;"><h3>Paling Populer</h3><div id="movie-grid" class="movie-grid"></div></div>`;
+    container.innerHTML = `<div style="padding:15px;"><h3 style="margin-bottom:15px;">Paling Populer</h3><div id="movie-grid" class="movie-grid"></div></div>`;
     const grid = document.getElementById('movie-grid');
     try {
         const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}`);
         const data = await res.json();
         grid.innerHTML = data.results.map(m => `
-            <div class="card" onclick="openPlayer('${m.title.replace(/'/g, "\\'")}', '${m.id}')">
+            <div class="card" onclick="openPlayer('${(m.title || m.name).replace(/'/g, "\\'")}', '${m.id}')">
                 <div class="card-img-wrapper"><img src="${IMG_URL + m.poster_path}"></div>
-                <div class="card-title">${m.title}</div>
+                <div class="card-title">${m.title || m.name}</div>
             </div>`).join('');
     } catch (e) { console.log(e); }
 }
@@ -60,9 +60,9 @@ async function searchMovies(query) {
         const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`);
         const data = await res.json();
         grid.innerHTML = data.results.map(m => `
-            <div class="card" onclick="openPlayer('${m.title.replace(/'/g, "\\'")}', '${m.id}')">
+            <div class="card" onclick="openPlayer('${(m.title || m.name).replace(/'/g, "\\'")}', '${m.id}')">
                 <div class="card-img-wrapper"><img src="${IMG_URL + (m.poster_path || '')}"></div>
-                <div class="card-title">${m.title}</div>
+                <div class="card-title">${m.title || m.name}</div>
             </div>`).join('');
     } catch (e) { console.log(e); }
 }
