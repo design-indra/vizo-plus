@@ -19,47 +19,26 @@
 
     <div id="loginOverlay" class="overlay-full" style="display: none;">
         <div class="login-card">
-            <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" alt="Vizo Logo" style="width: 100px; margin-bottom: 20px;">
+            <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" alt="Vizo Logo" style="width: 80px; margin-bottom: 15px;">
             <h2 id="authHeading">Masuk ke Vizo+</h2>
-            <p id="authSubtext" style="color: #888; margin-bottom: 20px;">Nikmati drama tanpa batas</p>
-            
-            <input type="email" id="emailInput" placeholder="Email (contoh: user@vizo.com)">
-            <input type="password" id="passInput" placeholder="Password (min. 6 karakter)">
-            
+            <input type="email" id="emailInput" placeholder="Email">
+            <input type="password" id="passInput" placeholder="Password">
             <button id="authBtn" class="play-main-btn" onclick="handleAuth()" style="width: 100%;">Masuk</button>
-            
-            <p style="margin-top: 20px; font-size: 13px; color: #ccc;">
+            <p style="margin-top: 15px; font-size: 12px; color: #888;">
                 <span id="toggleText">Belum punya akun?</span> 
-                <a href="javascript:void(0)" onclick="toggleAuthMode()" id="toggleLink" style="color: #e50914; text-decoration: none; font-weight: bold;">Daftar</a>
+                <a href="javascript:void(0)" onclick="toggleAuthMode()" id="toggleLink" style="color: #e50914; font-weight: bold;">Daftar</a>
             </p>
         </div>
     </div>
 
     <div id="main-content" style="display:none;">
-        <div id="sidebar" class="sidebar">
-            <button class="close-sidebar" onclick="toggleSidebar()">×</button>
-            <div class="sidebar-header">
-                <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" alt="Vizo Logo">
-            </div>
-            <ul class="sidebar-menu">
-                <li onclick="openMenu('profile')"><span>👤</span> Profil Saya</li>
-                <li onclick="openMenu('favorit')"><span>⭐</span> Favorit</li>
-                <li onclick="openMenu('download')"><span>📥</span> Download</li>
-                <li class="premium-link"><span>💎</span> Vizo Premium</li>
-                <li onclick="handleLogout()" style="color: #e50914; border: none; margin-top: 20px;"><span>🚪</span> Keluar</li>
-            </ul>
-        </div>
-
         <header>
             <div class="header-top">
                 <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" alt="Vizo Logo" class="vizo-logo-small">
-                <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
                     <div class="user-avatar" onclick="openMenu('profile')">U</div>
                     <button class="menu-btn" onclick="toggleSidebar()">☰</button>
                 </div>
-            </div>
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Cari drakor, c-drama..." onkeyup="handleSearch(event)">
             </div>
             <nav class="categories">
                 <button class="cat-btn active" onclick="fetchLatest(this)">Terbaru</button>
@@ -67,52 +46,25 @@
                 <div class="separator"></div>
                 <button class="cat-btn" onclick="fetchDrama('ko', this)">K-Drama</button>
                 <button class="cat-btn" onclick="fetchDrama('zh', this)">C-Drama</button>
-                <button class="cat-btn" onclick="fetchDrama('th', this)">Thai</button>
             </nav>
         </header>
 
         <main id="movie-grid"></main>
-        <div style="height: 80px;"></div>
-
+        
         <div class="bottom-nav">
-            <div class="nav-item active" onclick="location.reload()"><span>🏠</span><p>Beranda</p></div>
-            <div class="nav-item" onclick="alert('Fitur segera hadir!')"><span>🔍</span><p>Eksplor</p></div>
-            <div class="nav-item" onclick="fetchTrending()"><span>🔥</span><p>Populer</p></div>
+            <div class="nav-item active" onclick="location.reload()"><span>🏠</span><p>Home</p></div>
             <div class="nav-item" onclick="openMenu('favorit')"><span>📚</span><p>Koleksi</p></div>
+            <div class="nav-item" onclick="handleLogout()"><span>🚪</span><p>Keluar</p></div>
         </div>
     </div>
 
-    <div id="playerOverlay" class="overlay">
-        <div class="overlay-content">
-            <button class="close-btn" onclick="closePlayer()">×</button>
-            <div id="details-section" class="details-card">
-                <h2 id="detailTitle"></h2>
-                <div class="meta-info">⭐ <span id="detailRating"></span> | <span id="detailYear"></span></div>
-                <p id="detailOverview"></p>
-                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
-                    <button class="play-main-btn" onclick="startVideo()">PUTAR</button>
-                    <button id="favBtn" class="fav-btn" onclick="handleFav()">⭐ Favorit</button>
-                </div>
-            </div>
-            <div id="video-wrapper" style="display:none;" class="iframe-wrapper">
-                <iframe id="videoIframe" src="" allowfullscreen></iframe>
-            </div>
-        </div>
-    </div>
-
-    <div id="menuOverlay" class="overlay-full" style="display: none; background: #050505;">
-        <div class="menu-container">
-            <button class="close-btn" onclick="closeMenu()" style="position: absolute; top: 10px; right: 20px;">×</button>
-            <div id="profileSection" class="menu-page">
-                <div class="user-avatar" style="width: 80px; height: 80px; font-size: 32px; margin: 0 auto 15px;">U</div>
-                <h2 id="userNameDisplay" style="text-align: center;">User</h2>
-                <p style="text-align: center; color: #ffd700;">💎 Premium Member</p>
-            </div>
-            <div id="favoritSection" class="menu-page">
-                <h3>Favorit Saya</h3>
-                <div id="fav-grid" class="mini-grid"></div>
-            </div>
-        </div>
+    <div id="sidebar" class="sidebar">
+        <button class="close-sidebar" onclick="toggleSidebar()">×</button>
+        <ul class="sidebar-menu">
+            <li onclick="openMenu('profile')">👤 Profil Saya</li>
+            <li onclick="openMenu('favorit')">⭐ Favorit</li>
+            <li class="premium-link">💎 Vizo Premium</li>
+        </ul>
     </div>
 
     <script src="script.js"></script>
