@@ -119,12 +119,17 @@ async function fetchPopularMovies() {
     const grid = document.getElementById('pop-grid');
     if (!grid) return;
     
+    grid.innerHTML = '<p style="text-align:center; grid-column:1/-1;">Memuat film populer...</p>';
+    
     try {
         const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}`);
         const data = await res.json();
+        
         grid.innerHTML = data.results.map(m => `
-            <div class="card" onclick="alert('${m.title}')">
-                <img src="${IMG_URL + m.poster_path}" alt="${m.title}">
+            <div class="card" onclick="openPlayer('${m.title.replace(/'/g, "\\'")}', '${m.id}')">
+                <div class="card-img-wrapper">
+                    <img src="${IMG_URL + m.poster_path}" alt="${m.title}">
+                </div>
                 <div class="card-title">${m.title}</div>
             </div>
         `).join('');
@@ -132,6 +137,7 @@ async function fetchPopularMovies() {
         grid.innerHTML = "<p>Gagal memuat data populer.</p>";
     }
 }
+
 
 function updateActiveNavItem(page) {
     const items = document.querySelectorAll('.nav-item');
