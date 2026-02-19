@@ -1,52 +1,63 @@
+// Pengatur Navigasi Utama
 window.addEventListener('load', () => {
-    renderLogin();
-    renderSidebar();
-    
+    // Inisialisasi awal
+    if (typeof renderSidebar === "function") renderSidebar();
+
+    // Cek Status Login Firebase
     auth.onAuthStateChanged(user => {
-        document.getElementById('splash-screen').style.display = 'none';
-        if (user) {
-            document.getElementById('loginOverlay').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-            renderBottomNav();
-            showPage('home');
-        } else {
-            document.getElementById('loginOverlay').style.display = 'flex';
-            document.getElementById('main-content').style.display = 'none';
-        }
+        const splash = document.getElementById('splash-screen');
+        const login = document.getElementById('loginOverlay');
+        const main = document.getElementById('main-content');
+
+        // Beri delay sedikit agar transisi halus
+        setTimeout(() => {
+            if (splash) splash.style.display = 'none';
+
+            if (user) {
+                if (login) login.style.display = 'none';
+                if (main) main.style.display = 'block';
+                renderBottomNav();
+                showPage('home'); // Panggil fungsi dari home.js
+            } else {
+                if (login) login.style.display = 'flex';
+                if (main) main.style.display = 'none';
+                if (typeof renderLogin === "function") renderLogin();
+            }
+        }, 2000);
     });
 });
 
 function renderBottomNav() {
     document.getElementById('bottom-nav').innerHTML = `
-        <div class="nav-item" onclick="showPage('home')"><span>🏠</span><p>Home</p></div>
+        <div class="nav-item active" onclick="showPage('home')"><span>🏠</span><p>Home</p></div>
         <div class="nav-item" onclick="showPage('shorts')"><span>📱</span><p>Shorts</p></div>
-        <div class="nav-item" onclick="showPage('profile')"><span>👤</span><p>Profil</p></div>`;
+        <div class="nav-item" onclick="showPage('profile')"><span>👤</span><p>Profil</p></div>
+    `;
 }
 
 function showPage(page) {
     const container = document.getElementById('content-container');
-    if(page === 'home') renderHome(container);
-    else if(page === 'shorts') renderShorts(container);
-    else if(page === 'profile') renderProfile(container);
+    const navItems = document.querySelectorAll('.nav-item');
     
-    // Update active class
-    const items = document.querySelectorAll('.nav-item');
-    items.forEach(item => item.classList.remove('active'));
+    // Reset Active State Nav
+    navItems.forEach(item => item.classList.remove('active'));
+
+    if (page === 'home') {
+        if (navItems[0]) navItems[0].classList.add('active');
+        renderHome(container);
+    } else if (page === 'shorts') {
+        if (navItems[1]) navItems[1].classList.add('active');
+        renderShorts(container);
+    } else if (page === 'profile') {
+        if (navItems[2]) navItems[2].classList.add('active');
+        renderProfile(container);
+    }
+    
+    // Tutup sidebar otomatis setiap pindah halaman
+    const sb = document.getElementById('sidebar');
+    if (sb) sb.classList.remove('active');
 }
 
-function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
-
-// Pintu darurat: Paksa tutup splash jika macet lebih dari 5 detik
-setTimeout(() => {
-    const splash = document.getElementById('splash-screen');
-    if (splash && splash.style.display !== 'none') {
-        console.warn("Firebase lambat merespon, memaksa splash tertutup.");
-        splash.style.display = 'none';
-        
-        // Cek apakah user sudah terdefinisi, jika tidak tampilkan login
-        if (!auth.currentUser) {
-            document.getElementById('loginOverlay').style.display = 'flex';
-            renderLogin(); // Pastikan fungsi ini ada di auth.js
-        }
-    }
-}, 5000);
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+}
