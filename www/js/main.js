@@ -82,3 +82,28 @@ function updateActiveNav(page) {
     const pages = ['home', 'shorts', 'popular', 'profile'];
     items.forEach((item, i) => item.classList.toggle('active', pages[i] === page));
 }
+
+function filterCategory(element, type) {
+    // 1. Ubah tampilan tombol aktif
+    document.querySelectorAll('.cat-item').forEach(el => el.classList.remove('active'));
+    element.classList.add('active');
+
+    // 2. Logika filter (Mencari berdasarkan kata kunci kategori)
+    const grid = document.getElementById('movie-grid');
+    if (!grid) {
+        showPage('home'); // Jika sedang tidak di home, pindah ke home dulu
+        return;
+    }
+
+    let keyword = "";
+    if (type === 'korean') keyword = "Korean Drama";
+    else if (type === 'chinese') keyword = "Chinese Drama";
+    else if (type === 'thai') keyword = "Thailand";
+    else if (type === 'cinema') keyword = "Cinema";
+    else {
+        fetchLatest(); // Kembali ke trending jika klik "Semua"
+        return;
+    }
+
+    searchMovies(keyword); // Gunakan fungsi search yang sudah ada untuk filter
+}
