@@ -1,0 +1,6 @@
+{
+  "appId": "com.vizo.app",
+  "appName": "VizoPlus",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}
