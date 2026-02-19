@@ -1,4 +1,3 @@
-// --- DATA FIREBASE DARI SCREENSHOT KAMU ---
 const firebaseConfig = {
   apiKey: "AIzaSyAmeKFqlAHPjxbm4mZNAd-e4w4mcP7lhkQ",
   authDomain: "vizo-plus.firebaseapp.com",
@@ -8,7 +7,6 @@ const firebaseConfig = {
   appId: "1:366285407901:web:f544ef45e462071909b674"
 };
 
-// Inisialisasi
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
@@ -18,25 +16,27 @@ const IMG_URL = 'https://image.tmdb.org/t/p/w500';
 
 let isSignUpMode = false;
 
-// Monitor Status Login
-window.addEventListener('load', () => {
-    setTimeout(() => {
-        document.getElementById('splash-screen').style.display = 'none';
-        auth.onAuthStateChanged(user => {
+// Monitor Status Login - Diperbaiki untuk APK
+window.addEventListener('DOMContentLoaded', () => {
+    auth.onAuthStateChanged(user => {
+        const splash = document.getElementById('splash-screen');
+        const login = document.getElementById('loginOverlay');
+        const main = document.getElementById('main-content');
+
+        setTimeout(() => {
+            if (splash) splash.style.display = 'none';
             if (user) {
-                document.getElementById('loginOverlay').style.display = 'none';
-                document.getElementById('main-content').style.display = 'block';
-                document.querySelectorAll('.user-avatar').forEach(av => av.innerText = user.email[0].toUpperCase());
+                if (login) login.style.display = 'none';
+                if (main) main.style.display = 'block';
                 fetchLatest();
             } else {
-                document.getElementById('loginOverlay').style.display = 'flex';
-                document.getElementById('main-content').style.display = 'none';
+                if (login) login.style.display = 'flex';
+                if (main) main.style.display = 'none';
             }
-        });
-    }, 2000);
+        }, 1500);
+    });
 });
 
-// Fungsi Login & Daftar
 async function handleAuth() {
     const email = document.getElementById('emailInput').value;
     const pass = document.getElementById('passInput').value;
@@ -56,27 +56,36 @@ function toggleAuthMode() {
     isSignUpMode = !isSignUpMode;
     document.getElementById('authHeading').innerText = isSignUpMode ? "Daftar Akun" : "Masuk ke Vizo+";
     document.getElementById('authBtn').innerText = isSignUpMode ? "Daftar Sekarang" : "Masuk";
-    document.getElementById('toggleLink').innerText = isSignUpMode ? "Masuk" : "Daftar";
+    document.getElementById('toggleLink').innerText = isSignUpMode ? "Masuk" : "Daftar Akun Baru";
 }
 
 function handleLogout() { auth.signOut(); }
-
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
 
-async function loadData(url) {
+async function fetchLatest() {
     const grid = document.getElementById('movie-grid');
-    grid.innerHTML = '<p style="text-align:center; grid-column:1/-1;">Loading...</p>';
-    const res = await fetch(url);
-    const data = await res.json();
-    grid.innerHTML = '';
-    data.results.forEach(m => {
-        if(!m.poster_path) return;
-        grid.innerHTML += `
-            <div class="card">
-                <img src="${IMG_URL + m.poster_path}">
-                <div class="card-title">${m.name || m.title}</div>
-            </div>`;
-    });
+    grid.innerHTML = '<p style="text-align:center; grid-column:1/-1;">Memuat...</p>';
+    
+    try {
+        const res = await fetch(`${BASE_URL}/trending/tv/day?api_key=${API_KEY}`);
+        const data = await res.json();
+        grid.innerHTML = '';
+        data.results.forEach(m => {
+            if(!m.poster_path) return;
+            grid.innerHTML += `
+                <div class="card" onclick="playVideo('https://www.w3schools.com/html/mov_bbb.mp4')">
+                    <img src="${IMG_URL + m.poster_path}">
+                    <div class="card-title">${m.name || m.title}</div>
+                </div>`;
+        });
+    } catch (e) { grid.innerHTML = 'Gagal memuat data.'; }
 }
 
-function fetchLatest() { loadData(`${BASE_URL}/trending/tv/day?api_key=${API_KEY}`); }
+function playVideo(url) {
+    const player = `
+        <div id="videoPlayerOverlay" class="video-overlay" style="position:fixed; inset:0; background:#000; z-index:20000; display:flex; align-items:center;">
+            <span onclick="this.parentElement.remove()" style="position:absolute; top:30px; right:30px; font-size:40px; color:#fff; cursor:pointer;">×</span>
+            <video controls autoplay style="width:100%"><source src="${url}" type="video/mp4"></video>
+        </div>`;
+    document.body.insertAdjacentHTML('beforeend', player);
+}
