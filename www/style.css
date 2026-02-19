@@ -1,227 +1,42 @@
-/* --- Root & Reset --- */
 :root {
     --primary: #e50914;
     --bg-dark: #050505;
-    --bg-card: #141414;
-    --text: #ffffff;
-    --text-dim: #b3b3b3;
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: white; overflow-x: hidden; }
 
-body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg-dark);
-    color: var(--text);
-    overflow-x: hidden;
-    line-height: 1.5;
-}
+/* Header Sejajar */
+#app-header { position: sticky; top: 0; z-index: 1000; background: #000; padding: 10px 15px; height: 60px; display: flex; align-items: center; }
+.header-wrapper { display: flex; align-items: center; width: 100%; gap: 10px; }
+.vizo-logo-small { height: 22px; flex-shrink: 0; }
+.search-container { flex: 1; }
+.search-container input { width: 100%; background: #1a1a1a; border: 1px solid #333; padding: 7px 15px; border-radius: 20px; color: white; font-size: 13px; outline: none; }
+.menu-btn { background: none; border: none; color: white; font-size: 28px; cursor: pointer; flex-shrink: 0; }
 
-/* --- Header Layout (Solusi Sejajar) --- */
-#app-header {
-    position: sticky;
-    top: 0;
-    z-index: 2000;
-    background: #000000;
-    padding: 10px 12px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-}
+/* Grid & Poster (3 Kolom) */
+.movie-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px; padding-bottom: 80px; }
+.card { cursor: pointer; text-align: center; }
+.card-img-wrapper { border-radius: 8px; overflow: hidden; aspect-ratio: 2/3; background: #111; }
+.card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card-title { font-size: 11px; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.header-wrapper {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    gap: 10px; /* Jarak antar elemen logo-search-menu */
-}
+/* Sidebar Kanan */
+.sidebar { position: fixed; top: 0; right: -100%; width: 80%; max-width: 300px; height: 100%; background: #111; z-index: 2000; transition: 0.4s; padding: 20px; box-shadow: -5px 0 15px rgba(0,0,0,0.5); }
+.sidebar.active { right: 0; }
+.sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.close-sidebar { background: none; border: none; color: white; font-size: 30px; }
+.sidebar-menu li { list-style: none; padding: 15px; border-bottom: 1px solid #222; font-size: 14px; }
+.logout-item { color: var(--primary); font-weight: bold; }
 
-.vizo-logo-small {
-    height: 22px;
-    width: auto;
-    flex-shrink: 0; /* Logo tidak akan gepeng */
-}
+/* Bottom Nav */
+.bottom-nav { position: fixed; bottom: 0; width: 100%; height: 65px; background: rgba(0,0,0,0.9); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #222; z-index: 1000; }
+.nav-item { color: #555; text-align: center; font-size: 10px; flex: 1; }
+.nav-item span { font-size: 20px; display: block; }
+.nav-item.active { color: var(--primary); }
 
-.search-container {
-    flex-grow: 1; /* Search box mengambil ruang tengah yang tersedia */
-    display: flex;
-    align-items: center;
-}
-
-.search-container input {
-    width: 100%;
-    background: #1a1a1a;
-    border: 1px solid #333;
-    padding: 7px 15px;
-    border-radius: 20px;
-    color: #fff;
-    font-size: 14px;
-    outline: none;
-    transition: 0.3s;
-}
-
-.search-container input:focus {
-    border-color: var(--primary);
-    background: #222;
-}
-
-.menu-btn {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 24px;
-    cursor: pointer;
-    flex-shrink: 0;
-    padding: 0 5px;
-}
-
-/* --- Movie Grid (3 Kolom Stabil) --- */
-.movie-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    padding: 12px;
-    padding-bottom: 100px; /* Ruang untuk bottom nav */
-}
-
-.card {
-    background: var(--bg-card);
-    border-radius: 8px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s;
-}
-
-.card:active {
-    transform: scale(0.96);
-}
-
-.card-img-wrapper {
-    width: 100%;
-    aspect-ratio: 2 / 3;
-    overflow: hidden;
-    background: #222;
-}
-
-.card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.card-title {
-    padding: 6px 4px;
-    font-size: 11px;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: var(--text-dim);
-}
-
-/* --- Hero Section --- */
-.hero {
-    position: relative;
-    width: 100%;
-    background-color: #111;
-    overflow: hidden;
-}
-
-.play-main-btn {
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 8px 20px;
-    border-radius: 4px;
-    font-weight: bold;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-/* --- Bottom Navigation --- */
-.bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 65px;
-    background: rgba(0, 0, 0, 0.95);
-    backdrop-filter: blur(10px);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    border-top: 1px solid #222;
-    z-index: 1000;
-}
-
-.nav-item {
-    color: #666;
-    text-align: center;
-    flex: 1;
-}
-
-.nav-item span {
-    font-size: 20px;
-    display: block;
-}
-
-.nav-item p {
-    font-size: 10px;
-    margin-top: 2px;
-}
-
-.nav-item.active {
-    color: var(--primary);
-}
-
-/* --- Sidebar --- */
-.sidebar {
-    position: fixed;
-    top: 0;
-    right: -280px;
-    width: 280px;
-    height: 100%;
-    background: #111;
-    z-index: 3000;
-    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: -5px 0 15px rgba(0,0,0,0.5);
-}
-
-.sidebar.active {
-    right: 0;
-}
-
-/* --- Shorts Section --- */
-.shorts-container {
-    height: 100vh;
-    overflow-y: scroll;
-    scroll-snap-type: y mandatory;
-    background: #000;
-}
-
-.short-video-post {
-    height: 100vh;
-    width: 100vw;
-    scroll-snap-align: start;
-    position: relative;
-}
-
-/* --- Animations --- */
-.loader {
-    width: 30px;
-    height: 30px;
-    border: 3px solid #333;
-    border-top: 3px solid var(--primary);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
+/* Splash & Loader */
+#splash-screen { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.splash-logo { width: 100px; margin-bottom: 20px; }
+.loader { width: 30px; height: 30px; border: 3px solid #333; border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
