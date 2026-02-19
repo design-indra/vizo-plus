@@ -9,10 +9,10 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
+    <script src="https://www.youtube.com/iframe_api"></script>
+    
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.youtube.com/iframe_api"></script>
-
 </head>
 <body>
 
@@ -26,22 +26,15 @@
     <div id="main-content" style="display:none;">
         
         <header id="app-header">
-    
-
-            // Di dalam file js/main.js atau js/home.js saat render header, pastikan strukturnya seperti ini:
-
-header.innerHTML = `
-    <div class="header-content" style="display:flex; width:100%; align-items:center; gap:10px;">
-        <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" class="vizo-logo-small">
-        <div class="search-box" style="flex:1; position:relative;">
-            <input type="text" id="searchInput" placeholder="Cari film..." 
-                style="width:100%; background:#222; border:none; padding:8px 15px; border-radius:20px; color:white; font-size:13px; outline:none;"
-                onkeyup="searchMovies(this.value)">
-        </div>
-        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-    </div>
-`;
-
+            <div class="header-wrapper">
+                <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" class="vizo-logo-small" alt="Logo">
+                
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Cari film..." onkeyup="searchMovies(this.value)">
+                </div>
+                
+                <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+            </div>
         </header>
 
         <main id="content-container"></main>
@@ -51,15 +44,12 @@ header.innerHTML = `
 
     <div id="sidebar" class="sidebar">
         <div class="sidebar-header">
-            <h3>Menu</h3>
+            <h3>Menu Utama</h3>
             <button onclick="toggleSidebar()" class="close-sidebar">×</button>
         </div>
         <ul class="sidebar-menu">
-            <li onclick="alert('Pengaturan segera hadir')">⚙️ Pengaturan</li>
-            <li onclick="alert('Kebijakan Privasi Vizo+')">🛡️ Kebijakan Privasi</li>
-            <li onclick="clearCache()">🧹 Clear Cache</li>
-            <li onclick="alert('Kontak: support@vizo.com')">📞 Kontak</li>
-            <li onclick="alert('Syarat & Layanan Vizo+')">📜 Syarat Layanan</li>
+            <li onclick="clearCache()">🧹 Bersihkan Cache</li>
+            <li onclick="alert('Vizo+ v2.0.1')">ℹ️ Tentang Aplikasi</li>
             <li class="logout-item" onclick="handleLogout()">🚪 Keluar</li>
         </ul>
     </div>
@@ -68,16 +58,18 @@ header.innerHTML = `
         const API_KEY = 'f008869b3272ff8ea57a29ec647ca989';
         const BASE_URL = 'https://api.themoviedb.org/3';
         const IMG_URL = 'https://image.tmdb.org/t/p/w500';
+
+        // Wajib untuk YouTube API
+        function onYouTubeIframeAPIReady() {
+            console.log("YouTube API siap digunakan.");
+        }
     </script>
 
     <script src="js/auth.js"></script>
-    
+    <script src="js/player.js"></script>
     <script src="js/home.js"></script>
     <script src="js/shorts.js"></script>
     <script src="js/profile.js"></script>
-    
-    <script src="js/player.js"></script>
-    
     <script src="js/main.js"></script>
 
 </body>
