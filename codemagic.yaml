@@ -8,12 +8,17 @@ workflows:
         script: npm install
       - name: Capacitor Android Setup
         script: |
-          npx cap init VizoPlus com.vizo.app --web-dir www
-          npx cap add android
+          # Inisialisasi jika belum ada
+          npx cap init VizoPlus com.vizo.app --web-dir www --confirm
+          npx cap add android || echo "Android platform already exists"
+          # Sinkronisasi file www ke dalam folder android
+          npx cap copy android
+          # Salin file firebase ke tempat yang benar
           cp google-services.json android/app/
       - name: Build APK
         script: |
           cd android
+          chmod +x gradlew
           ./gradlew assembleDebug
     artifacts:
       - android/app/build/outputs/apk/debug/*.apk
