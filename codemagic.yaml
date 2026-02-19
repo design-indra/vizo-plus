@@ -5,16 +5,20 @@ workflows:
     instance_type: mac_mini_m1
     scripts:
       - name: Install Dependencies
-        script: npm install
+        script: |
+          npm install
+          npm install @capacitor/core @capacitor/cli @capacitor/android
       - name: Capacitor Android Setup
         script: |
-          # Inisialisasi jika belum ada
-          npx cap init VizoPlus com.vizo.app --web-dir www --confirm
-          npx cap add android || echo "Android platform already exists"
-          # Sinkronisasi file www ke dalam folder android
-          npx cap copy android
-          # Salin file firebase ke tempat yang benar
-          cp google-services.json android/app/
+          # Buat folder www jika belum ada
+          mkdir -p www
+          # Sinkronisasi konfigurasi
+          npx cap sync
+          # Tambah folder android secara paksa
+          npx cap add android || echo "Android already exists"
+          # Salin file Firebase ke lokasi yang benar
+          mkdir -p android/app
+          cp google-services.json android/app/ || echo "Warning: google-services.json not found"
       - name: Build APK
         script: |
           cd android
