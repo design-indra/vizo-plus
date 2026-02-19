@@ -1,33 +1,25 @@
-// File: www/js/main.js
-
 window.addEventListener('load', () => {
     auth.onAuthStateChanged(user => {
-        const splash = document.getElementById('splash-screen');
-        const login = document.getElementById('loginOverlay');
-        const main = document.getElementById('main-content');
-
-        if (splash) splash.style.display = 'none';
-
+        document.getElementById('splash-screen').style.display = 'none';
         if (user) {
-            if (login) login.style.display = 'none';
-            if (main) main.style.display = 'block';
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
             renderBottomNav();
             showPage('home');
         } else {
-            if (login) login.style.display = 'flex';
-            if (main) main.style.display = 'none';
+            document.getElementById('loginOverlay').style.display = 'flex';
+            document.getElementById('main-content').style.display = 'none';
         }
     });
 });
 
 function showPage(page) {
     const container = document.getElementById('content-container');
-    const searchBar = document.getElementById('search-bar-root');
+    const searchRoot = document.getElementById('search-root');
     if (!container) return;
 
-    // Reset view
     container.innerHTML = "";
-    if (searchBar) searchBar.style.display = (page === 'shorts') ? 'none' : 'block';
+    if (searchRoot) searchRoot.style.display = (page === 'shorts') ? 'none' : 'block';
 
     if (page === 'home') renderHome(container);
     else if (page === 'shorts') renderShorts(container);
@@ -35,48 +27,52 @@ function showPage(page) {
     else if (page === 'profile') renderProfile(container);
 
     updateActiveNav(page);
-    const sidebar = document.getElementById('sidebar');
-    if (sidebar) sidebar.classList.remove('active');
+    document.getElementById('sidebar').classList.remove('active');
+}
+
+async function renderPopular(container) {
+    container.innerHTML = `
+        <div style="padding:15px;"><h3 style="margin-bottom:15px;">Paling Populer</h3>
+        <div id="movie-grid" class="movie-grid"></div></div>`;
+    const grid = document.getElementById('movie-grid');
+    try {
+        const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}`);
+        const data = await res.json();
+        grid.innerHTML = data.results.map(m => `
+            <div class="card" onclick="openPlayer('${m.title.replace(/'/g, "\\'")}', '${m.id}')">
+                <div class="card-img-wrapper"><img src="${IMG_URL + m.poster_path}"></div>
+                <div class="card-title">${m.title}</div>
+            </div>`).join('');
+    } catch (e) { console.log(e); }
 }
 
 async function searchMovies(query) {
     const grid = document.getElementById('movie-grid');
     const hero = document.getElementById('hero-section');
     if (!grid) return;
-
     if (!query || query.trim().length < 2) {
         if (hero) hero.style.display = 'block';
-        fetchLatest(); 
-        return;
+        fetchLatest(); return;
     }
-
     if (hero) hero.style.display = 'none';
-    grid.innerHTML = '<p style="grid-column:1/-1; text-align:center;">Mencari...</p>';
-
     try {
         const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`);
         const data = await res.json();
-        
-        grid.innerHTML = data.results.map(m => {
-            if (!m.poster_path) return '';
-            return `<div class="card" onclick="openPlayer('${m.title.replace(/'/g, "\\'")}', '${m.id}')">
-                <div class="card-img-wrapper"><img src="${IMG_URL + m.poster_path}"></div>
+        grid.innerHTML = data.results.map(m => `
+            <div class="card" onclick="openPlayer('${m.title.replace(/'/g, "\\'")}', '${m.id}')">
+                <div class="card-img-wrapper"><img src="${IMG_URL + (m.poster_path || '')}"></div>
                 <div class="card-title">${m.title}</div>
-            </div>`;
-        }).join('');
+            </div>`).join('');
     } catch (e) { console.log(e); }
 }
 
 function renderBottomNav() {
-    const nav = document.getElementById('bottom-nav');
-    nav.innerHTML = `
+    document.getElementById('bottom-nav').innerHTML = `
         <div class="nav-item" onclick="showPage('home')"><span>🏠</span><p>Home</p></div>
         <div class="nav-item" onclick="showPage('shorts')"><span>📱</span><p>Short</p></div>
         <div class="nav-item" onclick="showPage('popular')"><span>🔥</span><p>Populer</p></div>
-        <div class="nav-item" onclick="showPage('profile')"><span>👤</span><p>Profil</p></div>
-    `;
+        <div class="nav-item" onclick="showPage('profile')"><span>👤</span><p>Profil</p></div>`;
 }
-
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
 function updateActiveNav(page) {
     const items = document.querySelectorAll('.nav-item');
