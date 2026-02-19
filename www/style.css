@@ -45,3 +45,40 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: whit
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* Styling Category Bar */
+.category-scroll {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px 0 5px 0;
+    gap: 10px;
+    white-space: nowrap;
+    scrollbar-width: none; /* Hilangkan scrollbar di Firefox */
+}
+
+.category-scroll::-webkit-scrollbar {
+    display: none; /* Hilangkan scrollbar di Chrome/Safari */
+}
+
+.cat-item {
+    padding: 6px 15px;
+    background: #1a1a1a;
+    border-radius: 15px;
+    font-size: 12px;
+    color: #ccc;
+    border: 1px solid #333;
+    transition: 0.3s;
+}
+
+.cat-item.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* Penyesuaian Header agar muat dua baris */
+#app-header {
+    height: auto; /* Biarkan tinggi menyesuaikan konten */
+    flex-direction: column;
+    align-items: flex-start;
+}
