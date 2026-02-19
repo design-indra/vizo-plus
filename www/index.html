@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vizo+ - Premium Drama Streaming</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vizo+ Premium</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
@@ -24,36 +24,44 @@
             <input type="email" id="emailInput" placeholder="Email">
             <input type="password" id="passInput" placeholder="Password">
             <button id="authBtn" class="play-main-btn" onclick="handleAuth()" style="width: 100%;">Masuk</button>
-            <p style="margin-top: 15px; font-size: 12px; color: #888;">
+            <p class="toggle-text">
                 <span id="toggleText">Belum punya akun?</span> 
-                <a href="javascript:void(0)" onclick="toggleAuthMode()" id="toggleLink" style="color: #e50914; font-weight: bold;">Daftar</a>
+                <a href="javascript:void(0)" onclick="toggleAuthMode()" id="toggleLink">Daftar</a>
             </p>
         </div>
     </div>
 
     <div id="main-content" style="display:none;">
-        <header>
+        <header class="navbar">
             <div class="header-top">
                 <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" alt="Vizo Logo" class="vizo-logo-small">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <div class="user-avatar" onclick="openMenu('profile')">U</div>
-                    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                <div class="header-right">
+                    <div class="user-avatar" onclick="toggleSidebar()">U</div>
                 </div>
             </div>
             <nav class="categories">
-                <button class="cat-btn active" onclick="fetchLatest(this)">Terbaru</button>
-                <button class="cat-btn" onclick="fetchTrending(this)">Populer</button>
-                <div class="separator"></div>
-                <button class="cat-btn" onclick="fetchDrama('ko', this)">K-Drama</button>
-                <button class="cat-btn" onclick="fetchDrama('zh', this)">C-Drama</button>
+                <button class="cat-btn active" onclick="fetchLatest()">Terbaru</button>
+                <button class="cat-btn">Populer</button>
+                <button class="cat-btn">K-Drama</button>
             </nav>
         </header>
 
-        <main id="movie-grid"></main>
+        <section class="hero" id="hero-section">
+            <div class="hero-info">
+                <h1>Avatar: The Way of Water</h1>
+                <p>Jelajahi keindahan Pandora yang luar biasa.</p>
+                <button class="play-hero-btn" onclick="playVideo('https://www.w3schools.com/html/mov_bbb.mp4')">▶ Putar</button>
+            </div>
+        </section>
+
+        <main class="content-section">
+            <h3 class="section-title">Trending Sekarang</h3>
+            <div id="movie-grid" class="movie-grid"></div>
+        </main>
         
         <div class="bottom-nav">
             <div class="nav-item active" onclick="location.reload()"><span>🏠</span><p>Home</p></div>
-            <div class="nav-item" onclick="openMenu('favorit')"><span>📚</span><p>Koleksi</p></div>
+            <div class="nav-item"><span>📚</span><p>Koleksi</p></div>
             <div class="nav-item" onclick="handleLogout()"><span>🚪</span><p>Keluar</p></div>
         </div>
     </div>
@@ -61,8 +69,8 @@
     <div id="sidebar" class="sidebar">
         <button class="close-sidebar" onclick="toggleSidebar()">×</button>
         <ul class="sidebar-menu">
-            <li onclick="openMenu('profile')">👤 Profil Saya</li>
-            <li onclick="openMenu('favorit')">⭐ Favorit</li>
+            <li>👤 Profil Saya</li>
+            <li>⭐ Favorit</li>
             <li class="premium-link">💎 Vizo Premium</li>
         </ul>
     </div>
