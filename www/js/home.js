@@ -17,9 +17,9 @@ async function fetchLatest() {
         const res = await fetch(`${BASE_URL}/trending/movie/day?api_key=${API_KEY}`);
         const data = await res.json();
         grid.innerHTML = data.results.map(m => `
-            <div class="card" onclick="openPlayer('${m.title.replace(/'/g, "\\'")}', '${m.id}')">
+            <div class="card" onclick="openPlayer('${(m.title || m.name).replace(/'/g, "\\'")}', '${m.id}')">
                 <div class="card-img-wrapper"><img src="${IMG_URL + m.poster_path}"></div>
-                <div class="card-title">${m.title}</div>
+                <div class="card-title">${m.title || m.name}</div>
             </div>`).join('');
     } catch (e) { console.log(e); }
 }
