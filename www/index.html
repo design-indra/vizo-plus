@@ -1,1 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vizo+ - Premium Drama Streaming</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
 
+    <div id="splash-screen">
+        <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" alt="Vizo Logo" class="splash-logo">
+        <div class="loader"></div>
+    </div>
+
+    <div id="loginOverlay" class="overlay-full" style="display: none;">
+        <div class="login-card">
+            <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" alt="Vizo Logo" style="width: 100px; margin-bottom: 20px;">
+            <h2>Selamat Datang</h2>
+            <p style="color: #888; margin-bottom: 20px;">Masuk untuk mulai menonton</p>
+            <input type="text" id="usernameInput" placeholder="Masukkan Nama Kamu">
+            <button class="play-main-btn" onclick="handleLogin()" style="width: 100%;">Masuk ke Vizo+</button>
+        </div>
+    </div>
+
+    <div id="main-content" style="display:none;">
+        
+        <div id="sidebar" class="sidebar">
+            <button class="close-sidebar" onclick="toggleSidebar()">×</button>
+            <div class="sidebar-header">
+                <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" alt="Vizo Logo">
+            </div>
+            <ul class="sidebar-menu">
+                <li onclick="openMenu('profile')"><span>👤</span> Profil Saya</li>
+                <li onclick="openMenu('favorit')"><span>⭐</span> Favorit</li>
+                <li onclick="openMenu('download')"><span>📥</span> Download</li>
+                <li><span>⚙️</span> Pengaturan</li>
+                <li class="premium-link"><span>💎</span> Vizo Premium</li>
+                <li onclick="handleLogout()" style="color: #e50914; border: none; margin-top: 20px;"><span>🚪</span> Keluar</li>
+            </ul>
+        </div>
+
+        <header>
+            <div class="header-top">
+                <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" alt="Vizo Logo" class="vizo-logo-small">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="user-avatar" onclick="openMenu('profile')">U</div>
+                    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                </div>
+            </div>
+            
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Cari drakor, c-drama..." onkeyup="handleSearch(event)">
+            </div>
+
+            <nav class="categories">
+                <button class="cat-btn active" onclick="fetchLatest(this)">Terbaru</button>
+                <button class="cat-btn" onclick="fetchTrending(this)">Populer</button>
+                <div class="separator"></div>
+                <button class="cat-btn" onclick="fetchDrama('ko', this)">K-Drama</button>
+                <button class="cat-btn" onclick="fetchDrama('zh', this)">C-Drama</button>
+                <button class="cat-btn" onclick="fetchDrama('th', this)">Thai</button>
+                <button class="cat-btn" onclick="fetchDrama('ja', this)">Japan</button>
+            </nav>
+        </header>
+
+        <main id="movie-grid"></main>
+
+        <div style="height: 80px;"></div>
+
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="location.reload()">
+                <span>🏠</span><p>Beranda</p>
+            </div>
+            <div class="nav-item" onclick="alert('Fitur Eksplor Segera Hadir!')">
+                <span>🔍</span><p>Eksplor</p>
+            </div>
+            <div class="nav-item" onclick="fetchTrending()">
+                <span>🔥</span><p>Populer</p>
+            </div>
+            <div class="nav-item" onclick="openMenu('favorit')">
+                <span>📚</span><p>Koleksi</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="playerOverlay" class="overlay">
+        <div class="overlay-content">
+            <button class="close-btn" onclick="closePlayer()">×</button>
+            <div id="details-section" class="details-card">
+                <h2 id="detailTitle"></h2>
+                <div class="meta-info">⭐ <span id="detailRating"></span> | <span id="detailYear"></span></div>
+                <p id="detailOverview"></p>
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
+                    <button class="play-main-btn" onclick="startVideo()">PUTAR SEKARANG</button>
+                    <button id="favBtn" class="fav-btn" onclick="handleFav()">⭐ Favorit</button>
+                </div>
+            </div>
+            <div id="video-wrapper" style="display:none;" class="iframe-wrapper">
+                <iframe id="videoIframe" src="" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="menuOverlay" class="overlay-full" style="display: none; background: var(--bg-dark);">
+        <div class="menu-container">
+            <button class="close-btn" onclick="closeMenu()" style="position: absolute; top: 10px; right: 20px;">×</button>
+            
+            <div id="profileSection" class="menu-page">
+                <div class="user-avatar" style="width: 80px; height: 80px; font-size: 32px; margin: 0 auto 15px;">U</div>
+                <h2 id="userNameDisplay" style="text-align: center; margin-bottom: 5px;">User Vizo</h2>
+                <p style="text-align: center; color: #ffd700; font-size: 14px;">💎 Member Premium</p>
+            </div>
+
+            <div id="favoritSection" class="menu-page">
+                <h3 style="margin-bottom: 15px; border-left: 4px solid var(--primary); padding-left: 10px;">Favorit Saya</h3>
+                <div id="fav-grid" class="mini-grid"></div>
+            </div>
+
+            <div id="downloadSection" class="menu-page">
+                <h3 style="margin-bottom: 15px; border-left: 4px solid var(--primary); padding-left: 10px;">Download</h3>
+                <p style="color: #666; text-align: center; margin-top: 40px;">Belum ada video diunduh.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
