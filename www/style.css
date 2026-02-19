@@ -249,3 +249,24 @@ header {
     height: 100vh !important;
     pointer-events: none;
 }
+
+.vizo-tiktok-player {
+    background: #000;
+    width: 100vw;
+    height: 100vh;
+}
+
+.shorts-info h3 {
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: #fff;
+}
+
+.shorts-info p {
+    font-size: 14px;
+    color: #eee;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
