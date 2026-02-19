@@ -1,0 +1,23 @@
+workflows:
+  android-build:
+    name: Vizo Plus Android Build
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    scripts:
+      - name: Install Dependencies
+        script: npm install
+      - name: Capacitor Android Setup
+        script: |
+          npx cap init VizoPlus com.vizo.app --web-dir www
+          npx cap add android
+          cp google-services.json android/app/
+      - name: Build APK
+        script: |
+          cd android
+          ./gradlew assembleDebug
+    artifacts:
+      - android/app/build/outputs/apk/debug/*.apk
+    publishing:
+      email:
+        recipients:
+          - GANTI_DENGAN_EMAIL_KAMU@gmail.com
