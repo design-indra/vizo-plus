@@ -6,14 +6,20 @@
  */
 async function renderHome(container) {
     // 1. Atur Header (Logo & Tombol Menu)
-    const header = document.getElementById('app-header');
-    if (header) {
-        header.style.display = 'flex';
-        header.innerHTML = `
-            <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" alt="Vizo Logo" class="vizo-logo-small">
-            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-        `;
-    }
+    
+// Di dalam file js/main.js atau js/home.js saat render header, pastikan strukturnya seperti ini:
+
+header.innerHTML = `
+    <div class="header-content" style="display:flex; width:100%; align-items:center; gap:10px;">
+        <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" class="vizo-logo-small">
+        <div class="search-box" style="flex:1; position:relative;">
+            <input type="text" id="searchInput" placeholder="Cari film..." 
+                style="width:100%; background:#222; border:none; padding:8px 15px; border-radius:20px; color:white; font-size:13px; outline:none;"
+                onkeyup="searchMovies(this.value)">
+        </div>
+        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+    </div>
+`;
 
     // 2. Isi Kontainer dengan Hero Section (Banner) dan Grid Film
     // ID 76600 adalah Avatar: The Way of Water untuk tombol Putar di Banner
