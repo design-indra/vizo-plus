@@ -1,117 +1,88 @@
 // File: www/js/shorts.js
 
-let ytPlayers = {}; // Menyimpan instance player YouTube
-
 async function renderShorts(container) {
     const header = document.getElementById('app-header');
     if (header) header.style.display = 'none';
 
-    container.innerHTML = `<div class="shorts-container" id="shorts-wrapper"></div>`;
+    container.innerHTML = `<div class="shorts-container" id="shorts-wrapper">
+        <p id="shorts-loading" style="text-align:center; margin-top:50vh; color:#555;">Memuat Video TikTok...</p>
+    </div>`;
+    
     const wrapper = document.getElementById('shorts-wrapper');
 
     try {
-        const res = await fetch(`${BASE_URL}/trending/all/week?api_key=${API_KEY}`);
-        const data = await res.json();
-        
-        wrapper.innerHTML = '';
+        // Menggunakan API publik gratis untuk mengambil video trending TikTok
+        // Anda bisa mengganti 'trending' dengan keyword lain seperti 'movie', 'drama', dll.
+        const res = await fetch(`https://www.tikwm.com/api/feed/list?region=ID&count=20`);
+        const result = await res.json();
+        const videos = result.data;
 
-        data.results.forEach((m, index) => {
+        if (document.getElementById('shorts-loading')) document.getElementById('shorts-loading').remove();
+
+        videos.forEach((vid, index) => {
             const shortItem = document.createElement('div');
             shortItem.className = 'short-video-post';
             shortItem.setAttribute('data-index', index);
-            
-            // Buat ID unik untuk container player YouTube
-            const playerId = `player-${index}`;
 
             shortItem.innerHTML = `
-                <div class="shorts-overlay" onclick="toggleMute('${playerId}')"></div>
+                <div class="shorts-overlay" onclick="handleVideoTap(this)"></div>
                 
-                <div id="${playerId}" class="yt-placeholder"></div>
+                <video 
+                    class="vizo-tiktok-player" 
+                    loop 
+                    playsinline 
+                    preload="auto"
+                    style="width:100%; height:100%; object-fit:cover;"
+                    src="${vid.play}">
+                </video>
 
                 <div class="shorts-info">
-                    <h3>@VizoShorts</h3>
-                    <p>${m.title || m.name}</p>
+                    <h3>@${vid.author.unique_id}</h3>
+                    <p>${vid.title}</p>
                 </div>
 
                 <div class="shorts-actions">
-                    <div class="action-item"><span>❤️</span><p>1.2k</p></div>
-                    <div class="action-item" onclick="openPlayer('${m.title || m.name}', '${m.id}')"><span>🖼️</span><p>Full</p></div>
+                    <div class="action-item"><span>❤️</span><p>${formatNumber(vid.digg_count)}</p></div>
+                    <div class="action-item"><span>💬</span><p>${formatNumber(vid.comment_count)}</p></div>
+                    <div class="action-item"><span>🔗</span><p>Share</p></div>
                 </div>
             `;
             wrapper.appendChild(shortItem);
-
-            // Ambil ID Video dan inisialisasi player
-            fetchVideoAndInitPlayer(m.id, playerId);
         });
 
-        // Inisialisasi Deteksi Scroll (Intersection Observer)
-        initScrollObserver();
+        initTikTokScrollObserver();
 
     } catch (e) {
-        console.error(e);
-        container.innerHTML = "<p>Gagal memuat Shorts.</p>";
+        console.error("TikTok Shorts Error:", e);
+        container.innerHTML = "<p style='text-align:center; padding-top:50px;'>Gagal memuat TikTok Shorts.</p>";
     }
 }
 
-async function fetchVideoAndInitPlayer(movieId, playerId) {
-    const res = await fetch(`${BASE_URL}/movie/${movieId}/videos?api_key=${API_KEY}`);
-    const data = await res.json();
-    const video = data.results.find(v => v.site === 'YouTube') || data.results[0];
-    const videoKey = video ? video.key : 'dQw4w9WgXcQ';
-
-    // Inisialisasi YouTube Player API
-    ytPlayers[playerId] = new YT.Player(playerId, {
-        height: '100%',
-        width: '100%',
-        videoId: videoKey,
-        playerVars: {
-            'autoplay': 0,
-            'controls': 0,
-            'loop': 1,
-            'playlist': videoKey,
-            'modestbranding': 1,
-            'iv_load_policy': 3,
-            'showinfo': 0
-        },
-        events: {
-            'onReady': (event) => {
-                event.target.mute(); // Harus mute agar bisa autoplay
-            }
-        }
-    });
-}
-
-function initScrollObserver() {
-    const observerOptions = {
-        root: document.getElementById('shorts-wrapper'),
-        threshold: 0.8 // Video harus terlihat 80% baru putar
-    };
-
+function initTikTokScrollObserver() {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            const playerId = `player-${entry.target.getAttribute('data-index')}`;
-            const player = ytPlayers[playerId];
-
+            const video = entry.target.querySelector('video');
             if (entry.isIntersecting) {
-                if (player && player.playVideo) player.playVideo();
+                video.play();
+                video.muted = false; // Akan bersuara otomatis jika sudah ada interaksi pertama
             } else {
-                if (player && player.pauseVideo) player.pauseVideo();
+                video.pause();
             }
         });
-    }, observerOptions);
+    }, { threshold: 0.8 });
 
     document.querySelectorAll('.short-video-post').forEach(post => observer.observe(post));
 }
 
-// Fitur klik layar untuk aktifkan suara
-function toggleMute(playerId) {
-    const player = ytPlayers[playerId];
-    if (player) {
-        if (player.isMuted()) {
-            player.unMute();
-            alert("Suara Aktif");
-        } else {
-            player.mute();
-        }
+function handleVideoTap(overlay) {
+    const video = overlay.parentElement.querySelector('video');
+    if (video.paused) {
+        video.play();
+    } else {
+        video.pause();
     }
+}
+
+function formatNumber(num) {
+    return num >= 1000 ? (num / 1000).toFixed(1) + 'k' : num;
 }
