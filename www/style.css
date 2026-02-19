@@ -270,3 +270,19 @@ header {
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
+
+/* Update Header di style.css */
+#app-header {
+    padding: 10px 15px;
+    background: linear-gradient(to bottom, #050505 80%, transparent);
+}
+
+.search-box input:focus {
+    background: #333 !important;
+    border: 1px solid var(--primary) !important;
+}
+
+/* Menghilangkan search box saat di halaman Shorts */
+.hide-search .search-box {
+    display: none;
+}
