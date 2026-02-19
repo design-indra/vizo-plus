@@ -1,4 +1,4 @@
-// --- CONFIG FIREBASE ---
+// --- FIREBASE CONFIG (MILIKMU) ---
 const firebaseConfig = {
     apiKey: "AIzaSyAmeKFqlAHPjxbm4mZNAd-e4w4mcP7lhkQ",
     authDomain: "vizo-plus.firebaseapp.com",
@@ -11,83 +11,119 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
-// --- UI LOGIC ---
+const API_KEY = 'f008869b3272ff8ea57a29ec647ca989';
+const BASE_URL = 'https://api.themoviedb.org/3';
+const IMG_URL = 'https://image.tmdb.org/t/p/w500';
 
-function updateUI(user) {
-    const splash = document.getElementById('splash-screen');
-    const login = document.getElementById('loginOverlay');
-    const main = document.getElementById('main-content');
+let currentDrama = null;
+let favorites = JSON.parse(localStorage.getItem('vizoFav')) || [];
+let isSignUpMode = false;
 
-    if (splash) splash.style.display = 'none';
+// Splash Screen & Auth Observer
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        document.getElementById('splash-screen').style.display = 'none';
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                document.getElementById('userNameDisplay').innerText = user.email.split('@')[0];
+                document.querySelectorAll('.user-avatar').forEach(av => av.innerText = user.email[0].toUpperCase());
+                fetchLatest();
+            } else {
+                document.getElementById('loginOverlay').style.display = 'flex';
+                document.getElementById('main-content').style.display = 'none';
+            }
+        });
+    }, 2500);
+});
 
-    if (user) {
-        if (login) login.style.display = 'none';
-        if (main) main.style.display = 'block';
-        fetchMovies();
-    } else {
-        if (login) login.style.display = 'flex';
-        if (main) main.style.display = 'none';
-    }
-}
-
-auth.onAuthStateChanged(user => updateUI(user));
-
-// --- AUTH LOGIC ---
-let isLoginMode = true;
+// Auth Logic
 function toggleAuthMode() {
-    isLoginMode = !isLoginMode;
-    document.getElementById('authHeading').innerText = isLoginMode ? "Masuk ke Vizo+" : "Daftar Vizo+";
-    document.getElementById('authBtn').innerText = isLoginMode ? "Masuk" : "Buat Akun";
-    document.getElementById('toggleText').innerText = isLoginMode ? "Belum punya akun?" : "Sudah punya akun?";
-    document.getElementById('toggleLink').innerText = isLoginMode ? "Daftar" : "Masuk";
+    isSignUpMode = !isSignUpMode;
+    document.getElementById('authHeading').innerText = isSignUpMode ? "Daftar Akun" : "Masuk ke Vizo+";
+    document.getElementById('authBtn').innerText = isSignUpMode ? "Daftar Sekarang" : "Masuk";
+    document.getElementById('toggleLink').innerText = isSignUpMode ? "Masuk" : "Daftar";
 }
 
-function handleAuth() {
+async function handleAuth() {
     const email = document.getElementById('emailInput').value;
-    const password = document.getElementById('passInput').value;
-    if (!email || !password) return alert("Isi data lengkap");
-
-    if (isLoginMode) {
-        auth.signInWithEmailAndPassword(email, password).catch(e => alert(e.message));
-    } else {
-        auth.createUserWithEmailAndPassword(email, password).catch(e => alert(e.message));
-    }
+    const pass = document.getElementById('passInput').value;
+    if (!email || !pass) return alert("Isi email & password!");
+    try {
+        if (isSignUpMode) await auth.createUserWithEmailAndPassword(email, pass);
+        else await auth.signInWithEmailAndPassword(email, pass);
+    } catch (e) { alert(e.message); }
 }
 
-// --- CONTENT LOGIC (VIDEO) ---
-function fetchMovies() {
+function handleLogout() { auth.signOut().then(() => location.reload()); }
+
+// Navigation
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+function openMenu(page) {
+    document.getElementById('menuOverlay').style.display = 'flex';
+    document.querySelectorAll('.menu-page').forEach(p => p.style.display = 'none');
+    document.getElementById(page + 'Section').style.display = 'block';
+    if(page === 'favorit') displayFavorites();
+    toggleSidebar();
+}
+function closeMenu() { document.getElementById('menuOverlay').style.display = 'none'; }
+
+// Data Fetching
+async function loadData(url) {
     const grid = document.getElementById('movie-grid');
-    
-    // DATA FILM ASLI (Ganti link MP4 di sini)
-    const movies = [
-        { 
-            title: "Avatar: The Way of Water", 
-            img: "https://image.tmdb.org/t/p/w500/t6SlsTU7c9zSjM0pQM6908vRdb5.jpg", 
-            video: "https://www.w3schools.com/html/mov_bbb.mp4" 
-        },
-        { 
-            title: "Puss in Boots: The Last Wish", 
-            img: "https://image.tmdb.org/t/p/w500/kuf6ELuB3U8Ad6Z0UM6q4z3HbuV.jpg", 
-            video: "https://www.w3schools.com/html/movie.mp4" 
-        }
-    ];
-
-    grid.innerHTML = movies.map(m => `
-        <div class="movie-card" onclick="playVideo('${m.video}')">
-            <div class="poster-wrapper">
-                <img src="${m.img}">
-                <div class="play-badge">PLAY</div>
-            </div>
-            <p>${m.title}</p>
-        </div>
-    `).join('');
+    grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:50px;">Memuat...</div>';
+    const res = await fetch(url);
+    const data = await res.json();
+    grid.innerHTML = '';
+    data.results.forEach(m => {
+        if (!m.poster_path) return;
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.onclick = () => showDetail(m);
+        card.innerHTML = `<img src="${IMG_URL + m.poster_path}"><div class="card-title">${m.name}</div>`;
+        grid.appendChild(card);
+    });
 }
 
-function playVideo(url) {
-    const player = `
-        <div id="videoPlayerOverlay" class="video-overlay">
-            <span class="close-btn" onclick="document.getElementById('videoPlayerOverlay').remove()">×</span>
-            <video controls autoplay><source src="${url}" type="video/mp4"></video>
-        </div>`;
-    document.body.insertAdjacentHTML('beforeend', player);
+function fetchLatest(btn) { loadData(`${BASE_URL}/discover/tv?api_key=${API_KEY}&sort_by=first_air_date.desc&vote_count.gte=50`); }
+function fetchTrending(btn) { loadData(`${BASE_URL}/trending/tv/day?api_key=${API_KEY}`); }
+function fetchDrama(lang, btn) { loadData(`${BASE_URL}/discover/tv?api_key=${API_KEY}&with_original_language=${lang}&sort_by=popularity.desc`); }
+
+// Detail & Favorit
+function showDetail(movie) {
+    currentDrama = movie;
+    document.getElementById('detailTitle').innerText = movie.name;
+    document.getElementById('detailRating').innerText = movie.vote_average;
+    document.getElementById('detailYear').innerText = movie.first_air_date ? movie.first_air_date.split('-')[0] : "-";
+    document.getElementById('detailOverview').innerText = movie.overview;
+    const isFav = favorites.some(f => f.id === movie.id);
+    document.getElementById('favBtn').classList.toggle('active', isFav);
+    document.getElementById('playerOverlay').style.display = 'flex';
+}
+
+function handleFav() {
+    const idx = favorites.findIndex(f => f.id === currentDrama.id);
+    if (idx === -1) favorites.push({id: currentDrama.id, name: currentDrama.name, poster: currentDrama.poster_path});
+    else favorites.splice(idx, 1);
+    localStorage.setItem('vizoFav', JSON.stringify(favorites));
+    showDetail(currentDrama);
+}
+
+function displayFavorites() {
+    const grid = document.getElementById('fav-grid');
+    grid.innerHTML = favorites.map(m => `<div class="card" onclick="showDetailById(${m.id})"><img src="${IMG_URL + m.poster}"><div class="card-title">${m.name}</div></div>`).join('');
+}
+
+function startVideo() {
+    document.getElementById('videoIframe').src = `https://vidsrc.to/embed/tv/${currentDrama.id}`;
+    document.getElementById('details-section').style.display = 'none';
+    document.getElementById('video-wrapper').style.display = 'block';
+}
+
+function closePlayer() {
+    document.getElementById('playerOverlay').style.display = 'none';
+    document.getElementById('videoIframe').src = '';
+    document.getElementById('details-section').style.display = 'block';
+    document.getElementById('video-wrapper').style.display = 'none';
 }
