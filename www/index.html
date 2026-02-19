@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vizo+ Premium</title>
+    <title>Vizo+ Modular</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
@@ -13,68 +13,24 @@
 <body>
 
     <div id="splash-screen">
-        <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" alt="Vizo Logo" class="splash-logo">
+        <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" class="splash-logo">
         <div class="loader"></div>
     </div>
 
-    <div id="loginOverlay" class="overlay-full" style="display: none;">
-        <div class="login-card">
-            <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" alt="Vizo Logo" style="width: 80px; margin-bottom: 15px;">
-            <h2 id="authHeading">Masuk ke Vizo+</h2>
-            <input type="email" id="emailInput" placeholder="Email">
-            <input type="password" id="passInput" placeholder="Password">
-            <button id="authBtn" class="play-main-btn" onclick="handleAuth()" style="width: 100%;">Masuk</button>
-            <p class="toggle-text">
-                <span id="toggleText">Belum punya akun?</span> 
-                <a href="javascript:void(0)" onclick="toggleAuthMode()" id="toggleLink">Daftar</a>
-            </p>
-        </div>
-    </div>
+    <div id="loginOverlay" class="overlay-full" style="display: none;"></div>
 
     <div id="main-content" style="display:none;">
-        <header class="navbar">
-            <div class="header-top">
-                <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" alt="Vizo Logo" class="vizo-logo-small">
-                <div class="header-right">
-                    <div class="user-avatar" onclick="toggleSidebar()">U</div>
-                </div>
-            </div>
-            <nav class="categories">
-                <button class="cat-btn active" onclick="fetchLatest()">Terbaru</button>
-                <button class="cat-btn">Populer</button>
-                <button class="cat-btn">K-Drama</button>
-            </nav>
-        </header>
-
-        <section class="hero" id="hero-section">
-            <div class="hero-info">
-                <h1>Avatar: The Way of Water</h1>
-                <p>Jelajahi keindahan Pandora yang luar biasa.</p>
-                <button class="play-hero-btn" onclick="playVideo('https://www.w3schools.com/html/mov_bbb.mp4')">▶ Putar</button>
-            </div>
-        </section>
-
-        <main class="content-section">
-            <h3 class="section-title">Trending Sekarang</h3>
-            <div id="movie-grid" class="movie-grid"></div>
-        </main>
-        
-        <div class="bottom-nav">
-            <div class="nav-item active" onclick="location.reload()"><span>🏠</span><p>Home</p></div>
-            <div class="nav-item"><span>📚</span><p>Koleksi</p></div>
-            <div class="nav-item" onclick="handleLogout()"><span>🚪</span><p>Keluar</p></div>
-        </div>
+        <header id="app-header"></header>
+        <main id="content-container"></main>
+        <nav id="bottom-nav" class="bottom-nav"></nav>
     </div>
 
-    <div id="sidebar" class="sidebar">
-        <button class="close-sidebar" onclick="toggleSidebar()">×</button>
-        <ul class="sidebar-menu">
-            <li>👤 Profil Saya</li>
-            <li>⭐ Favorit</li>
-            <li class="premium-link">💎 Vizo Premium</li>
-        </ul>
-    </div>
+    <div id="sidebar" class="sidebar"></div>
 
-    <script src="script.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/home.js"></script>
+    <script src="js/shorts.js"></script>
+    <script src="js/profile.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
