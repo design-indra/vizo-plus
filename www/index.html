@@ -57,6 +57,21 @@
             <li class="logout-item" onclick="handleLogout()">🚪 Keluar / Logout</li>
         </ul>
     </div>
+<div id="editProfileModal" class="modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:4000; align-items:center; justify-content:center;">
+    <div style="background:#1a1a1a; width:90%; max-width:400px; padding:25px; border-radius:15px; border:1px solid #333;">
+        <h3 style="margin-bottom:20px; text-align:center;">Edit Profil</h3>
+        <label style="font-size:12px; color:#888;">Nama Lengkap</label>
+        <input type="text" id="editDisplayName" style="width:100%; background:#000; border:1px solid #333; padding:12px; border-radius:8px; color:#fff; margin-bottom:15px; outline:none;">
+        
+        <label style="font-size:12px; color:#888;">URL Foto Profil (Optional)</label>
+        <input type="text" id="editPhotoURL" style="width:100%; background:#000; border:1px solid #333; padding:12px; border-radius:8px; color:#fff; margin-bottom:25px; outline:none;" placeholder="https://image-link.com/avatar.jpg">
+        
+        <div style="display:flex; gap:10px;">
+            <button onclick="closeEditModal()" style="flex:1; background:#333; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold;">Batal</button>
+            <button onclick="saveProfileChanges()" style="flex:1; background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold;">Simpan</button>
+        </div>
+    </div>
+</div>
 
     <script>
         const API_KEY = 'f008869b3272ff8ea57a29ec647ca989';
