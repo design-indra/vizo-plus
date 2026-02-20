@@ -13,26 +13,6 @@
 </head>
 <body>
 
-    <div id="category-bar">
-        <header id="app-header">
-    <div class="header-wrapper">
-        <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" class="vizo-logo-small">
-        <div class="search-container" id="search-root">
-            <input type="text" id="searchInput" placeholder="Cari film..." oninput="searchMovies(this.value)">
-        </div>
-        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-    </div>
-    
-    <div class="category-scroll" id="category-bar">
-        <div class="cat-item active" onclick="filterCategory(this, 'all')">Semua</div>
-        <div class="cat-item" onclick="filterCategory(this, 'korean')">Drama Korea</div>
-        <div class="cat-item" onclick="filterCategory(this, 'chinese')">Drama China</div>
-        <div class="cat-item" onclick="filterCategory(this, 'thai')">Movie Thailand</div>
-        <div class="cat-item" onclick="filterCategory(this, 'cinema')">Bioskop</div>
-        <div class="cat-item" onclick="filterCategory(this, 'action')">Action</div>
-    </div>
-</header>
-
     <div id="splash-screen">
         <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" class="splash-logo">
         <div class="loader"></div>
@@ -49,7 +29,15 @@
                 </div>
                 <button class="menu-btn" onclick="toggleSidebar()">☰</button>
             </div>
-        
+            
+            <div class="category-scroll" id="category-bar">
+                <div class="cat-item active" onclick="filterCategory(this, 'all')">Semua</div>
+                <div class="cat-item" onclick="filterCategory(this, 'korean')">Drama Korea</div>
+                <div class="cat-item" onclick="filterCategory(this, 'chinese')">Drama China</div>
+                <div class="cat-item" onclick="filterCategory(this, 'thai')">Movie Thailand</div>
+                <div class="cat-item" onclick="filterCategory(this, 'cinema')">Bioskop</div>
+                <div class="cat-item" onclick="filterCategory(this, 'action')">Action</div>
+            </div>
         </header>
 
         <main id="content-container"></main>
@@ -81,6 +69,7 @@
     <script src="js/player.js"></script>
     <script src="js/home.js"></script>
     <script src="js/shorts.js"></script>
+    <script src="js/profile.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>
