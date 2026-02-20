@@ -17,10 +17,7 @@
         <header id="app-header">
     <div class="header-wrapper">
         <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" class="vizo-logo-small">
-        <div class="search-container" id="search-root">
-            <input type="text" id="searchInput" placeholder="Cari film..." oninput="searchMovies(this.value)">
-        </div>
-        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+        
     </div>
     
     <div class="category-scroll" id="category-bar">
@@ -40,7 +37,15 @@
 
     <div id="loginOverlay" class="overlay-full" style="display: none;"></div>
 
-    /* disini */
+    <div id="main-content" style="display:none;">
+        <header id="app-header">
+            <div class="header-wrapper">
+                <img src="https://i.ibb.co.com/BV5v4L9j/1000196715.jpg" class="vizo-logo-small">
+                <div class="search-container" id="search-root">
+                    <input type="text" id="searchInput" placeholder="Cari film..." oninput="searchMovies(this.value)">
+                </div>
+                <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+            </div>
         
         </header>
 
