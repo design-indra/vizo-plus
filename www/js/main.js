@@ -107,3 +107,73 @@ function filterCategory(element, type) {
 
     searchMovies(keyword); // Gunakan fungsi search yang sudah ada untuk filter
 }
+
+// File: www/js/main.js
+
+function showPage(page) {
+    const container = document.getElementById('content-container');
+    const header = document.getElementById('app-header');
+    
+    if (!container) return;
+    container.innerHTML = "";
+
+    // Sembunyikan header/search saat di halaman Shorts
+    if (header) {
+        header.style.display = (page === 'shorts') ? 'none' : 'block';
+    }
+
+    if (page === 'home') renderHome(container);
+    else if (page === 'shorts') renderShorts(container);
+    else if (page === 'popular') renderPopular(container);
+    else if (page === 'profile') renderProfile(container);
+
+    updateActiveNav(page);
+    document.getElementById('sidebar').classList.remove('active');
+}
+
+async function searchMovies(query) {
+    const grid = document.getElementById('movie-grid');
+    const hero = document.getElementById('hero-section');
+    if (!grid) return;
+
+    if (!query || query.trim().length < 2) {
+        if (hero) hero.style.display = 'block';
+        fetchLatest(); 
+        return;
+    }
+
+    if (hero) hero.style.display = 'none';
+    try {
+        const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        grid.innerHTML = data.results.map(m => `
+            <div class="card" onclick="openPlayer('${(m.title || m.name).replace(/'/g, "\\'")}', '${m.id}')">
+                <div class="card-img-wrapper"><img src="${IMG_URL + (m.poster_path || '')}"></div>
+                <div class="card-title">${m.title || m.name}</div>
+            </div>`).join('');
+    } catch (e) { console.log(e); }
+}
+
+function filterCategory(element, type) {
+    // Aktifkan tab warna merah
+    document.querySelectorAll('.cat-item').forEach(el => el.classList.remove('active'));
+    element.classList.add('active');
+
+    const input = document.getElementById('searchInput');
+    
+    if (type === 'all') {
+        input.value = "";
+        searchMovies("");
+    } else {
+        const queryMap = {
+            korean: "Korean Drama",
+            chinese: "Chinese Drama",
+            thai: "Thailand Movie",
+            cinema: "Bioskop",
+            action: "Action"
+        };
+        input.value = queryMap[type];
+        searchMovies(queryMap[type]);
+    }
+}
+// ... sisa fungsi lainnya (renderBottomNav, toggleSidebar, dll)
